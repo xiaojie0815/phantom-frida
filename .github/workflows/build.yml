@@ -124,7 +124,14 @@ jobs:
           echo "Will run: $CMD"
 
       - name: Apply patches and build
-        run: ${{ steps.cmd.outputs.cmd }}
+        run: ${{ steps.cmd.outputs.cmd }} 2>&1 | tee build.log
+
+      - name: Show Meson log on failure
+        if: failure()
+        run: |
+          if [ -f build/frida/build/meson-logs/meson-log.txt ]; then
+            tail -200 build/frida/build/meson-logs/meson-log.txt
+          fi
 
       - name: List artifacts
         run: |
